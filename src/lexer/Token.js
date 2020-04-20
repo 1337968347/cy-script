@@ -1,6 +1,16 @@
 
 const TokenType = require('./TokenType');
+const AlphabetHelper = require('./AlphabetHelper');
 
+const Keywords = new Set([
+    "var",
+    "if",
+    "else",
+    "function",
+    "return",
+    "break",
+    "while"
+])
 class Token {
     constructor(type, value) {
         this._type = type;
@@ -9,6 +19,10 @@ class Token {
 
     getType() {
         return this._type;
+    }
+
+    getValue() {
+        return this._value;
     }
 
     isVariable() {
@@ -24,6 +38,29 @@ class Token {
 
     toString() {
         return `type ${this._type.type}, value ${this._value}`;
+    }
+
+    static makeVarOrKeyword(it) {
+        let s = "";
+
+        while (it.hasNext()) {
+            const c = it.peek();
+            if (AlphabetHelper.isLiteral(c)) {
+                s += c
+            } else {
+                break;
+            }
+            it.next()
+        }
+
+        if (Keywords.has(s)) {
+            return new Token(TokenType.KEYWORD, s);
+        }
+
+        if (s == 'true' || s == 'false') {
+            return new Token(TokenType.BOOLEAN, s);
+        }
+        return new Token(TokenType.VARIABLE, s);
     }
 
 }
