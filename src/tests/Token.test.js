@@ -6,6 +6,7 @@ const { assert } = require('chai')
 
 describe("Token", () => {
     function assertToken(token, type, value) {
+        console.log(token)
         assert.equal(token.getValue(), value)
         assert.equal(token.getType(), type)
     }
@@ -25,5 +26,13 @@ describe("Token", () => {
 
     })
 
+    it("makeString", () => {
+        const tests = ["'123'", '"123"']
+        for (let test of tests) {
+            const it = new PeekIterator(arrayToGenerator([...test]))
+            const token = Token.makeString(it)
+            assertToken(token, TokenType.STRING, test)
+        }
+    })
 
 })

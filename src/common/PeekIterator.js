@@ -49,7 +49,7 @@ class PeekIterator {
 
         // 如果缓存队列长度超过限制= > 删除最先进来的那一个
         while (this.queueCache.length + 1 > CACHE_SIZE) {
-            this.queueCache.shife();
+            this.queueCache.shift();
         }
         this.queueCache.push(val)
         return val;

@@ -1,7 +1,7 @@
 /**
  * 异常处理
  */
-class LexicalException {
+class LexicalException extends Error{
     constructor(msg) {
         super(msg)
     }
