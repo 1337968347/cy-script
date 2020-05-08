@@ -101,82 +101,250 @@ class Token {
     }
 
     static makeOp(it) {
-        let s = "";
-
         let state = 0;
-
         while (it.hasNext()) {
-            let c = it.next();
+            let lookahead = it.next();
 
             switch (state) {
                 case 0:
-                    switch (c) {
-                        case '+':
+                    switch (lookahead) {
+                        case "+":
                             state = 1;
                             break;
-                        case '-':
+                        case "-":
                             state = 2;
                             break;
-                        case '*':
+                        case "*":
                             state = 3;
                             break;
-                        case '/':
+                        case "/":
                             state = 4;
                             break;
-                        case '>':
+                        case ">":
                             state = 5;
                             break;
-                        case '<':
+                        case "<":
                             state = 6;
                             break;
-                        case '=':
+                        case "=":
                             state = 7;
                             break;
-                        case '!':
+                        case "!":
                             state = 8;
                             break;
-                        case '&':
+                        case "&":
                             state = 9;
                             break;
-                        case '|':
+                        case "|":
                             state = 10;
                             break;
-                        case '^':
+                        case "^":
                             state = 11;
                             break;
-                        case '%':
-                            state = 11;
+                        case "%":
+                            state = 12;
                             break;
                         case ",":
-                            return new Token(TokenType.OPERATOR, ',');
+                            return new Token(TokenType.OPERATOR, ",");
                         case ";":
-                            return new Token(TokenType.OPERATOR, ';');
-                        default:
-                            break;
+                            return new Token(TokenType.OPERATOR, ";");
                     }
                     break;
-                case 1:
-                    if (c == '+') {
+                case 1: {
+                    if (lookahead == "+") {
                         return new Token(TokenType.OPERATOR, "++");
-                    } else if (c == "=") {
+                    } else if (lookahead == "=") {
                         return new Token(TokenType.OPERATOR, "+=");
                     } else {
-                        return new Token(TokenType.OPERATOR, "+")
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "+");
                     }
+                }
                 case 2:
-                    if (c == "-") {
+                    if (lookahead == "-") {
                         return new Token(TokenType.OPERATOR, "--");
-                    } else if (c == "=") {
-                        return new Token(TokenType.OPERATOR, "-=")
-                    }else{
-                        return new Token(TokenType.OPERATOR, "-")
+                    } else if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "-=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "-");
                     }
+                case 3:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "*=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "*");
+                    }
+                case 4:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "/=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "/");
+                    }
+                case 5:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, ">=");
+                    } else if (lookahead == ">") {
+                        return new Token(TokenType.OPERATOR, ">>");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, ">");
+                    }
+                case 6:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "<=");
+                    } else if (lookahead == "<") {
+                        return new Token(TokenType.OPERATOR, "<<");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "<");
+                    }
+                case 7:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "==");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "=");
+                    }
+                case 8:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "!=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "!");
+                    }
+                case 9:
+                    if (lookahead == "&") {
+                        return new Token(TokenType.OPERATOR, "&&");
+                    } else if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "&=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "&");
+                    }
+                case 10:
+                    if (lookahead == "|") {
+                        return new Token(TokenType.OPERATOR, "||");
+                    } else if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "|=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "|");
+                    }
+                case 11:
+                    if (lookahead == "^") {
+                        return new Token(TokenType.OPERATOR, "^^");
+                    } else if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "^=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "^");
+                    }
+                case 12:
+                    if (lookahead == "=") {
+                        return new Token(TokenType.OPERATOR, "%=");
+                    } else {
+                        it.putBack();
+                        return new Token(TokenType.OPERATOR, "%");
+                    }
+            }
+        } // end while
+
+        throw new LexicalException("Unexpected error");
+    }
+
+    static makeNumber(it) {
+        let state = 0;
+        let s = "";
+
+        while (it.hasNext()) {
+            let lookhead = it.peek();
+            switch (state) {
+                case 0:
+                    if (lookhead == "0") {
+                        state = 1;
+                    } else if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 2;
+                    } else if (lookhead == "+" || lookhead == "-") {
+                        state = 3;
+                    } else if (lookhead == ".") {
+                        state = 5;
+                    }
+                    break;
+
+                case 1:
+                    if (lookhead == "0") {
+                        state = 1
+                    } else if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 2;
+                    } else if (lookhead == ".") {
+                        state = 4;
+                    } else {
+                        // 整形
+                        return new Token(TokenType.INTEGER, s)
+                    }
+                    break;
+
+                case 2:
+                    if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 2
+                    } else if (lookhead == ".") {
+                        state = 4
+                    } else {
+                        return new Token(TokenType.INTEGER, s);
+                    }
+                    break;
+
+                case 3:
+                    if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 2;
+                    } else if (lookhead == ".") {
+                        state = 5;
+                    } else {
+                        throw LexicalException.formChar(lookhead);
+                    }
+                    break;
+
+                case 4:
+                    if (lookhead == ".") {
+                        throw LexicalException.formChar(lookhead);
+                    } else if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 6
+                    } else {
+                        return new Token(TokenType.FLOAT, s);
+                    }
+                    break;
+
+                case 5:
+                    if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 6;
+                    } else {
+                        throw LexicalException.formChar(lookhead);
+                    }
+                    break;
+
+                case 6:
+                    if (AlphabetHelper.isNumber(lookhead)) {
+                        state = 6;
+                    } else if (lookhead == ".") {
+                        throw LexicalException.formChar(lookhead);
+                    } else {
+                        return new  Token(TokenType.FLOAT, s);
+                    }
+                    break;
+
                 default:
                     break;
             }
-
+            s += lookhead;
+            it.next();
         }
+
+        throw new LexicalException("Unexpected error");
     }
+
 }
 
 module.exports = Token;

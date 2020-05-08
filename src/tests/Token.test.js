@@ -35,4 +35,47 @@ describe("Token", () => {
         }
     })
 
+    it("makeOp", () => {
+        const tests = [
+            ["+ xxx", "+"],
+            ["++mmm", "++"],
+            ["/=g", "/="],
+            ["==1", "=="],
+            ["&=3982", "&="],
+            ["&777", "&"],
+            ["||xx", "||"],
+            ["^=111", "^="],
+            ["%7", "%"],
+        ]
+
+        for (let test of tests) {
+            const [input, expected] = test;
+            const it = new PeekIterator(arrayToGenerator([...input]));
+            const token = Token.makeOp(it);
+            assertToken(token, TokenType.OPERATOR, expected);
+        }
+    })
+
+    it("makeNumber", () => {
+        const tests = [
+            "+0 aa",
+            "-0 bbb",
+            ".3 ccc",
+            ".5555 ddd",
+            "7899.999 aaa",
+            "-100 ggg",
+            "-1000.5345345*123123",
+            "012 aaa"
+        ]
+
+        for (let test of tests) {
+            const it = new PeekIterator(arrayToGenerator([...test]))
+            const token = Token.makeNumber(it)
+            const [expected] = test.split(/[ *]/);
+            const type = test.indexOf('.') == -1 ? TokenType.INTEGER : TokenType.FLOAT
+            assertToken(token, type, expected)
+        }
+
+    })
+
 })
