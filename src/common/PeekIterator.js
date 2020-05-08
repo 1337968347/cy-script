@@ -1,63 +1,68 @@
-const LinkedList = require('linkedlist');
+const LinkedList = require('linkedlist')
 
-const CACHE_SIZE = 10;
+const CACHE_SIZE = 10
 
-// 数据流读取器
 class PeekIterator {
 
-    constructor(it, endToken) {
-        // 数据流
-        this.it = it;
-        // 被放回的元素
-        this.stackPutBacks = new LinkedList();
-        // 缓存用过的元素
-        this.queueCache = new LinkedList();
-        // 结束符
-        this.endToken = endToken;
+
+    constructor(it, endToken = null){
+        this.it = it
+        // 需要putBack的元素
+        this.stackPutBacks = new LinkedList()
+
+        // 基于时间窗口的缓存
+        this.queueCache = new LinkedList()
+
+        this.endToken = endToken
     }
 
-    peek() {
-        if (this.stackPutBacks.length > 0) {
-            return this.stackPutBacks.head;
+    peek(){
+        if(this.stackPutBacks.length > 0) {
+            return this.stackPutBacks.tail
         }
 
         const val = this.next()
-        this.putBack();
-        return val;
+        this.putBack()
+        return val
+
     }
 
-    putBack() {
-        if (this.queueCache.length > 0) {
-            this.stackPutBacks.push(this.queueCache.pop());
+    putBack(){
+        if(this.queueCache.length > 0) {
+            this.stackPutBacks.push(this.queueCache.pop())
         }
     }
 
-    next() {
-        let val = null;
+    hasNext(){
+        return this.endToken || !!this.peek()
+    }
 
-        if (this.stackPutBacks.length > 0) {
-            val = this.stackPutBacks.pop();
+    next(){
+        let val = null 
+
+        if(this.stackPutBacks.length > 0) {
+            val = this.stackPutBacks.pop()
         } else {
-            val = this.it.next().value;
-            // 当前读到结尾
-            if (val === undefined) {
-                const tmp = this.endToken;
-                this.endToken = null;
-                return tmp;
+            val = this.it.next().value
+            if(val === undefined) {
+                const tmp = this.endToken
+                this.endToken = null
+                val = tmp 
             }
         }
 
-        // 如果缓存队列长度超过限制= > 删除最先进来的那一个
-        while (this.queueCache.length + 1 > CACHE_SIZE) {
-            this.queueCache.shift();
+        // 处理缓存
+        while(this.queueCache.length > CACHE_SIZE - 1) {
+            this.queueCache.shift()
         }
         this.queueCache.push(val)
-        return val;
+
+        return val
+
     }
 
-    hasNext() {
-        return this.endToken || !!this.peek();
-    }
+
+
 }
 
-module.exports = PeekIterator;
+module.exports = PeekIterator

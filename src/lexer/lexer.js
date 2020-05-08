@@ -25,6 +25,7 @@ class Lexer {
             if (c == "/") {
                 if (lookahead == "/") {
                     while (it.hasNext() && (c = it.next()) != "\n");
+                    continue
                 } else if (lookahead == '*') {
                     let valid = false;
                     while (it.hasNext()) {
@@ -59,28 +60,42 @@ class Lexer {
             // 处理命名 
             if (AlphabetHelper.isLetter(c)) {
                 it.putBack()
-                tokens.push(Token.makeVarOrKeyword(c))
+                tokens.push(Token.makeVarOrKeyword(it))
                 continue
             }
 
             // 处理数字
             if (AlphabetHelper.isNumber(c)) {
-                it.putBack()
-                tokens.push(Token.makeNumberToken)
-            }
-
-            // 处理操作符
-
-
-            // 抛出异常
-
-
-
+                it.putBack();
+                tokens.push(Token.makeNumber(it));
+                continue;
+              }
+        
+              // + -
+              if ((c == "+" || c == "-") && AlphabetHelper.isNumber(lookahead)) {
+                // 跳过:a+1, 1+1
+                // +5, 3*-5
+                const lastToken = tokens[tokens.length - 1] || null;
+        
+                if (lastToken == null || !lastToken.isValue()) {
+                  it.putBack();
+                  tokens.push(Token.makeNumber(it));
+                  continue;
+                }
+              }
+        
+              if (AlphabetHelper.isOperator(c)) {
+                it.putBack();
+                tokens.push(Token.makeOp(it));
+                continue;
+              }
+        
+              throw LexicalException.formChar(c);
         }
 
 
-        return null;
+        return tokens;
     }
-
-
 }
+
+module.exports = Lexer

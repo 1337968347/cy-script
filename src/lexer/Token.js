@@ -7,7 +7,7 @@ const Keywords = new Set([
     "var",
     "if",
     "else",
-    "function",
+    "func",
     "return",
     "break",
     "while"
@@ -24,6 +24,10 @@ class Token {
 
     getValue() {
         return this._value;
+    }
+
+    isValue() {
+      return this.isScalar() || this.isVariable();
     }
 
     isVariable() {

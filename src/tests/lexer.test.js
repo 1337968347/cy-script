@@ -1,5 +1,5 @@
 const Token = require('../lexer/Token')
-const Lexer = require('../lexer/Lexer')
+const Lexer = require('../lexer/lexer')
 const TokenType = require('../lexer/TokenType')
 const arrayToGenerator = require('../common/arrayToGenerator')
 const {assert} = require('chai')
