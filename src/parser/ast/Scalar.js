@@ -1,9 +1,9 @@
-const ASTNode = require("./ASTNode")
+const Factor = require("./Factor")
 
-class Scalar extends ASTNode {
+class Scalar extends Factor {
 
-    constructor(parent, type, label) {
-        super(parent, type, label)
+    constructor(parent, it) {
+        super(parent, it)
     }
 }
 

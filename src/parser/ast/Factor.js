@@ -1,6 +1,6 @@
 const ASTNode = require("./ASTNode");
 const TokenType = require("../../lexer/TokenType");
-const ASTNodeTypes = require("./ASTNodeType");
+const ASTNodeTypes = require("./ASTNodeTypes");
 
 class Factor extends ASTNode {
 
