@@ -15,7 +15,7 @@ class SimpleParser {
         const op = it.nextMatch("+");
         expr.label = "+";
         expr.type = ASTNodeTypes.BINARY_EXPR;
-        expr.lexme = op;
+        expr.lexeme = op;
         expr.addChild(SimpleParser.parse(it))
         
         return expr;

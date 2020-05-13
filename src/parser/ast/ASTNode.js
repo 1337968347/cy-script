@@ -5,7 +5,7 @@ class ASTNode {
         this.parent = _parent;
 
         this.type = _type;
-        this.lexme = null;
+        this.lexeme = null;
         this.label = _label;
     }
 
@@ -18,11 +18,16 @@ class ASTNode {
     }
 
     getLexeme() {
-        return this.lexme;
+        return this.lexeme;
     }
 
     getChildren() {
         return this.children;
+    }
+
+    print(indent = 0) {
+        console.log(`${"".padStart(indent * 2, " ")}${this.label}`);
+        this.children.forEach(x => x.print(indent + 1))
     }
 }
 
