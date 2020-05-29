@@ -26,7 +26,7 @@ class Expr extends ASTNode {
      * @param {*} parent 
      * @param {*} it 
      */
-    static parseExpr(it) {
+    static parse(it) {
         return Expr.E(it, 0);
     }
 
@@ -52,7 +52,6 @@ class Expr extends ASTNode {
                 )
             )
         }
-
     }
 
     static E_(it, k) {

@@ -1,4 +1,4 @@
-const Stmt = require("./stmt")
+const Stmt = require("./Stmt")
 
 class Block extends Stmt {
 

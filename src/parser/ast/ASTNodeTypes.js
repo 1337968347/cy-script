@@ -14,5 +14,6 @@ module.exports = {
     SCALAR : new Enum("SCALAR", 11),
     RETURN_STMT :new Enum("RETURN_STMT", 12),
     FUNCTION_ARGS :new Enum("FUNCTION_ARGS", 13),
-    CALL_EXPR : new Enum("CALL_EXPR", 14)
+    CALL_EXPR : new Enum("CALL_EXPR", 14),
+    PROGRAM: new Enum("PROGRAM", 15)
 }

@@ -1,8 +1,8 @@
 
 class ASTNode {
-    constructor(_parent, _type, _label) {
+    constructor(_type, _label) {
         this.children = [];
-        this.parent = _parent;
+        this.parent = null;
 
         this.type = _type;
         this.lexeme = null;
@@ -15,6 +15,10 @@ class ASTNode {
 
     addChild(node) {
         this.children.push(node);
+    }
+
+    setLexeme(lexeme) {
+        this.lexeme = lexeme
     }
 
     getLexeme() {

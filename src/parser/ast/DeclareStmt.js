@@ -1,10 +1,30 @@
-const Stmt = require("./stmt")
+const ASTNodeTypes = require("./ASTNodeTypes");
+const ParseException = require("../util/ParseException")
+const Stmt = require("./Stmt")
+
 
 class DeclareStmt extends Stmt {
-
-    constructor(parent, type, label) {
-        super(parent, type, label)
+    constructor() {
+        super(ASTNodeTypes.DECLARE_STMT, "declare")
     }
 }
 
 module.exports = DeclareStmt;
+const { Factor, Expr } = require("./index");
+
+DeclareStmt.parse = (it) => {
+    const stmt = new DeclareStmt();
+    it.nextMatch("var");
+
+    const tkn = it.peek();
+    const factor = Factor.parse(it);
+    if (factor === null) {
+        throw ParseException.fromToken(tkn)
+    }
+    stmt.addChild(factor)
+    const lexeme = it.nextMatch("=")
+    const expr = Expr.parse(it)
+    stmt.addChild(expr)
+    stmt.setLexeme(lexeme)
+    return stmt;
+}
