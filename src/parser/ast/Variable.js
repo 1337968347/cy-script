@@ -13,7 +13,7 @@ class Variable extends Factor {
         this.typeLexeme = this.lexeme
     }
 
-    getTyoeLexeme() {
+    getTypeLexeme() {
         return this.typeLexeme
     }
 }
