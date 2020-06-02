@@ -3,6 +3,7 @@ const AlphabetHelper = require("./AlphabetHelper");
 const TokenType = require("./TokenType");
 const PeekIterator = require("../common/PeekIterator");
 const LexicalException = require('./lexicalException');
+const fs = require("fs");
 
 class Lexer {
 
@@ -69,32 +70,38 @@ class Lexer {
                 it.putBack();
                 tokens.push(Token.makeNumber(it));
                 continue;
-              }
-        
-              // + -
-              if ((c == "+" || c == "-") && AlphabetHelper.isNumber(lookahead)) {
+            }
+
+            // + -
+            if ((c == "+" || c == "-") && AlphabetHelper.isNumber(lookahead)) {
                 // 跳过:a+1, 1+1
                 // +5, 3*-5
                 const lastToken = tokens[tokens.length - 1] || null;
-        
+
                 if (lastToken == null || !lastToken.isValue()) {
-                  it.putBack();
-                  tokens.push(Token.makeNumber(it));
-                  continue;
+                    it.putBack();
+                    tokens.push(Token.makeNumber(it));
+                    continue;
                 }
-              }
-        
-              if (AlphabetHelper.isOperator(c)) {
+            }
+
+            if (AlphabetHelper.isOperator(c)) {
                 it.putBack();
                 tokens.push(Token.makeOp(it));
                 continue;
-              }
-        
-              throw LexicalException.formChar(c);
+            }
+
+            throw LexicalException.formChar(c);
         }
 
 
         return tokens;
+    }
+
+    static fromFile(src) {
+        const content = fs.readFileSync(src, "utf-8")
+        const lexer = new Lexer()
+        return arrayToGenerator(lexer.analyse(arrayToGenerator(content)))
     }
 }
 
